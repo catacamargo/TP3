@@ -1,6 +1,7 @@
-# TP3, UEFI: Entorno, desarrollo y análisis de seguridad
+# TP 3, UEFI: Entorno, desarrollo y análisis de seguridad
 
 Trabajo práctico sobre la arquitectura UEFI como entorno pre-sistema operativo: exploración de la UEFI Shell, desarrollo de una aplicación nativa en C, análisis del formato PE/COFF con Ghidra y ejecución en hardware real.
+
 
 ## Entorno utilizado
 | Componente | Versión |
@@ -15,6 +16,7 @@ Trabajo práctico sobre la arquitectura UEFI como entorno pre-sistema operativo:
 - [TP1: Exploración del entorno UEFI y la Shell](tp1-shell-uefi/)
 - [TP2: Desarrollo, compilación y análisis de seguridad](tp2-app-uefi/)
 - [TP3: Ejecución en hardware físico](tp3-bare-metal/)
+- [Capturas de pantalla de todo el proceso](capturas/)
 
 ## Correcciones a la consigna
 Durante el desarrollo encontramos algunos problemas en los comandos originales:
