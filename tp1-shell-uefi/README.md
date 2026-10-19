@@ -17,8 +17,6 @@ Al arrancar, el firmware cae en la **UEFI Interactive Shell v2.2** y muestra la 
 
 Cada uno se identifica por su **Device Path** (por ejemplo `PciRoot(0x0)/Pci(0x1,0x1)/Ata(0x0)/HD(1,MBR,...)`), no por un puerto fijo.
 
-![Arranque de la UEFI Shell](img/1.1-arranque.png)
-
 ## 1.2 Exploración de dispositivos (handles y protocolos)
 
 ```
@@ -39,10 +37,6 @@ dh -b
 | 9D | Shell, ShellParameters, LoadedImage(Shell) | La propia shell |
 
 Un mismo dispositivo expone varios protocolos: la partición puede usarse como filesystem (`SimpleFileSystem`) o como bloques crudos (`BlockIO`).
-
-![map](img/1.2-map.png)
-![ls](img/1.2-ls.png)
-![dh](img/1.2-dh.png)
 
 ### ❓ Pregunta 1
 > ¿Cuál es la ventaja de seguridad y compatibilidad de este modelo frente al antiguo BIOS?
@@ -67,11 +61,6 @@ set
 - `bcfg boot dump` muestra las opciones de arranque de forma legible. Por ejemplo, **Boot0002 = "EFI Internal Shell"**, con `DevPath = Fv(...)/FvFile(7C04A583-9E3E-4F1C-AD65-E05268D0B4D1)`. Ese GUID coincide con el de la imagen de la shell vista en el handle 9D del `dh`.
 - `set` crea variables de entorno de la shell. Con `-v` la variable es **volátil** y se pierde al reiniciar.
 
-![BootOrder](img/1.3-bootorder.png)
-![Boot####](img/1.3-boot0000.png)
-![bcfg](img/1.3-bcfg.png)
-![set](img/1.3-set.png)
-
 ### ❓ Pregunta 2
 > Observando las variables Boot#### y BootOrder, ¿cómo determina el Boot Manager la secuencia de arranque?
 
@@ -95,15 +84,9 @@ drivers -b
 - Las regiones `RT_Code` / `RT_Data` tienen `0x800000000000000F`. El bit 63 es **`EFI_MEMORY_RUNTIME`**: le indica al OS que esa memoria sigue en uso después de `ExitBootServices()`.
 - Totales: `RT_Code` 256 páginas (1 MB), `RT_Data` 581 páginas (~2,3 MB), y unos 42 MB de `BS_*` que el OS libera al arrancar. Total: 511 MB, coherente con `-m 512`.
 
-![memmap](img/1.4-memmap.png)
-
 **PCI:** lista los dispositivos PCI emulados por QEMU (host bridge, controlador IDE/SATA, video, etc.).
 
-![pci](img/1.4-pci.png)
-
 **Drivers:** se ve el *UEFI Driver Model* en acción. Los drivers Virtio y NVMe están **cargados pero sin dispositivos** (`#D = -`), porque QEMU no emula ese hardware: el driver registra su `Driver Binding Protocol` pero nunca se conecta. Es la carga perezosa (*lazy activation*). En cambio, la cadena `SataController → AtaAtapiPassThru → AtaBus → DiskIo → Partition` sí tiene dispositivos asociados: es el camino hasta FS0.
-
-![drivers](img/1.4-drivers.png)
 
 ### ❓ Pregunta 3
 > ¿Por qué las regiones RuntimeServicesCode son un objetivo principal para los desarrolladores de malware (Bootkits)?
