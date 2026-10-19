@@ -29,8 +29,6 @@ La compilación está en [`build.sh`](build.sh) y tiene tres pasos:
 
 > ⚠️ **Corrección:** el `objcopy` de la consigna no incluye la sección `.rodata`. Con la versión de gnu-efi de Debian 13, los strings constantes quedan en esa sección, así que **la app corría pero no imprimía nada**: limpiaba la pantalla, esperaba 5 segundos y volvía. En Ghidra se veía que el string se cargaba desde `0xe000` (`LEA RDX,[0xe000]`), pero esa sección no existía en el `.efi`. Se agregó `-j .rodata` y se solucionó.
 
-![Compilación](img/2.2-compilacion.png)
-
 ## 2.3 Análisis de metadatos y decompilación
 
 ### Metadatos
@@ -56,7 +54,6 @@ objdump -x aplicacion.efi
 | Import Directory | vacío | No importa bibliotecas |
 | Security Directory | vacío | **No está firmado**, por eso en bare metal hay que desactivar Secure Boot |
 
-
 ### Ghidra
 
 Al importar el `.efi`, Ghidra lo reconoce como PE y muestra los headers `MZ` (`4d 5a`) y `PE` (`50 45`). El análisis arranca en `entry` (`0x3000`), que **no es `efi_main`**: es el `crt0` de gnu-efi, que llama a `_relocate()` (aplica las relocaciones) y después a `_entry()`, que llama a `efi_main`.
@@ -71,7 +68,6 @@ En `efi_main` se observa:
 0000308c  3c cc         CMP    AL, 0xcc      → Ghidra: CMP AL, -52
 0000308e  75 29         JNZ    LAB_000030b9
 ```
-
 
 ### ❓ Pregunta 5
 > En el pseudocódigo de Ghidra, la condición `0xCC` suele aparecer como `-52`. ¿A qué se debe y por qué importa en ciberseguridad?
